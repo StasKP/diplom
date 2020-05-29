@@ -22,7 +22,7 @@ class CreatePlacesTable extends Migration
             $table->boolean('is_empty');
             $table->boolean('is_primary');
 
-            $table->integer('client')->nullable();
+            $table->unsignedInteger('client')->nullable();
 
             $table->timestamps();
 

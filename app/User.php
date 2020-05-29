@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'password_repeat', 'first_name', 'surname', 'phone', 'is_admin', 'is_corporate', 'corporate_name', 'client',
+        'email', 'password', 'password_repeat', 'first_name', 'surname', 'phone', 'is_admin', 'is_corporate', 'corporate_name', 'client',
     ];
 
     /**
@@ -56,4 +56,13 @@ class User extends Authenticatable
         $this->api_token = null;
         $this->save();
     }
+
+    public function place(){
+        return $this->hasMany('App\Place', 'client', 'id');
+    }
+
+    public function booking(){
+        return $this->hasMany('App\Booking', 'client', 'id');
+    }
 }
+

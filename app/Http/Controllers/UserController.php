@@ -15,12 +15,12 @@ class UserController extends Controller
     {
         // Валидация
         $validator = Validator::make($request->all(),[
-            'first_name' => 'required', // Имя
-            'surname' => 'required', // Фамилия
-            'email' => 'required', // Email
-            'phone' => 'required', // Телефон
-            'password' => 'required', // Пароль
-            'password_repeat' => 'required', // Повтор пароля
+            'first_name' => 'required',                 // Имя
+            'surname' => 'required',                    // Фамилия
+            'email' => 'required|unique:users|min:8',   // Email
+            'phone' => 'required',                      // Телефон
+            'password' => 'required|min:8',             // Пароль
+            'password_repeat' => 'required|min:8',      // Повтор пароля
         ]);
 
         // В случае ошибки валидации
@@ -31,9 +31,21 @@ class UserController extends Controller
                 ->setStatusCode(422, 'Unprocessable entity');
         }
 
+        // Проверка физическое ли лицо
+        if ($request->is_corporate == 0) {
+            $client = $request->first_name.' '.$request->surname;
+        }
+
+        // или юридическое
+        if ($request->is_corporate == 1) {
+            $client = $request->corporate_name;
+        }
+
         // Создание записи в БД
         $userId = User::create([
-                'password' => Hash::make($request->password)
+                'password' => Hash::make($request->password),
+                'client' => $client,
+//                'is_corporate'
             ] + $request->all()
         );
 
@@ -48,8 +60,8 @@ class UserController extends Controller
     {
         // Валидация
         $validator = Validator::make($request->all(),[
-            'email' => 'required', // Email
-            'password' => 'required' // Пароль
+            'email' => 'required',      // Email
+            'password' => 'required'    // Пароль
         ]);
 
         // В случае ошибки валидации
@@ -65,7 +77,8 @@ class UserController extends Controller
             // Ответ клиенту в случае успешной авторизации
             return response()
                 ->json([
-                    'token' => $user->generateToken() // Генерация токена
+                    'token' => $user->generateToken(),  // Генерация токена
+                    'client' => $user->client           // Отправка имени пользователя
                 ])
                 ->setStatusCode(200, 'OK');
         }
@@ -89,4 +102,15 @@ class UserController extends Controller
             ->setStatusCode(200, 'OK');
     }
 
+    // Получение одного пользователя
+    public function index(User $user){
+        // Проверка на администратора/менеджера/регистратора
+        if (Auth::user()->is_admin != 1 && Auth::user()->role == null) {
+            return response()
+                ->json()
+                ->setStatusCode(403, 'Forbidden');
+        }
+
+        return $user;
+    }
 }

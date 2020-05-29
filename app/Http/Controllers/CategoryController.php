@@ -22,9 +22,9 @@ class CategoryController extends Controller
 
         // Валидация
         $validator = Validator::make($request->all(),[
-            'name_category' => 'required', // Название категории
-            'number_of_main' => 'required', // Количество основных мест категории
-            'number_of_additional' => 'required' // Количество дополнительных мест категории
+            'name_category' => 'required',          // Название категории
+            'number_of_main' => 'required',         // Количество основных мест категории
+            'number_of_additional' => 'required'    // Количество дополнительных мест категории
         ]);
 
         // В случае ошибки валидации
@@ -42,8 +42,8 @@ class CategoryController extends Controller
         return response()
             ->json(
                 [
-                    'id' => $categoryId->id, // Id категории
-                    'name_category' => $request->name_category // Название категории
+                    'id' => $categoryId->id,                    // Id категории
+                    'name_category' => $request->name_category  // Название категории
                 ]
             )
             ->setStatusCode(201, 'Created');

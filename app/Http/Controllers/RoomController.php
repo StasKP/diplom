@@ -81,4 +81,47 @@ class RoomController extends Controller
             ->setStatusCode(204, 'Deleted');
     }
 
+    // Редактирование номера
+    public function update (Request $request, Room $room)
+    {
+        // Проверка на администратора
+        if (Auth::user()->is_admin != 1) {
+            return response()
+                ->json()
+                ->setStatusCode(403, 'Forbidden');
+        }
+
+        // Валидация
+        $validator = Validator::make($request->all(),[
+            'name_room' => 'required',      // Название номера
+            'category_room' => 'required',  // Категория номера
+            'corpus' => 'required',         // Корпус номера
+            'floor' => 'required',          // Этаж
+        ]);
+
+        // В случае ошибки валидации
+        if ($validator->fails()){
+            // Ответ клиенту
+            return response()
+                ->json($validator->errors())
+                ->setStatusCode(422, 'Unprocessable entity');
+        }
+
+        // Обновление записи в БД
+        $room->update($request->all());
+
+        // Ответ клиенту
+        return response()
+            ->json(
+                [
+                    'id' => $room->id,                                      // Id номера для проживания
+                    'name_room' => $room->name_room,                        // Номер номера для проживания
+                    'category_room' => $room->category_room,                // Категория номера для проживания
+                    'corpus' => $room->coprus,                              // Корпус номера для проживания
+                    'floor' => $room->floor,                                // Этаж номера для проживания
+                ]
+            )
+            ->setStatusCode(201, 'Created');
+    }
+
 }

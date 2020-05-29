@@ -12,12 +12,17 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+
 //----------------------------------------------Авторизация-------------------------------------------------------
 Route::post('/signup', 'UserController@signup'); // Регистрация
 Route::post('/login', 'UserController@login'); // Авторизация
 
 Route::middleware('auth:api')->group(function () { // Запросы с токеном
     Route::post('/logout', 'UserController@logout'); // Выход
+    Route::get('/user/{user}', 'UserController@index'); // Получение одного пользователя
+//    Route::get('/user', 'UserController@show'); // Получение всех пользователей
+
 });
 
 //----------------------------------------------Категории номеров-------------------------------------------------------
@@ -46,6 +51,7 @@ Route::get('/room/{room}', 'RoomController@show'); // Получение ном�
 
 Route::middleware('auth:api')->group(function () { // Запросы с токеном
     Route::post('/room', 'RoomController@store'); // Добавление номера
+    Route::patch('/room/{room}', 'RoomController@update'); // Редактирование номера
     Route::delete('/room/{room}', 'RoomController@destroy'); // Удаление номер
 });
 
@@ -56,5 +62,16 @@ Route::get('/room/{room}/place/{place}', 'PlaceController@show'); // Получ�
 Route::middleware('auth:api')->group(function () { // Запросы с токеном
     Route::post('/room/{room}/place', 'PlaceController@store'); // Добавление места
     Route::delete('/room/{room}/place/{place}', 'PlaceController@destroy'); // Удаление места
+    Route::patch('/room/{room}/place/{place}', 'PlaceController@update'); // Редактирование места
 });
 
+//----------------------------------------------Карточки бронирования-----------------------------------------
+Route::middleware('auth:api')->group(function () { // Запросы с токеном
+    Route::post('/booking', 'BookingController@store'); // Создание карточки бронирования
+    Route::get('/booking', 'BookingController@index'); // Получение всех карточек бронирования
+    Route::get('/booking/{booking}', 'BookingController@show'); // Получение одной карточки бронирования
+    Route::patch('/bookings/{booking}', 'BookingController@confirm'); // Подтверждение карточки бронирования
+    Route::delete('/booking/{booking}', 'BookingController@destroy'); // Удаление карточки бронирования
+    Route::patch('/booking/{booking}', 'BookingController@update');
+
+});

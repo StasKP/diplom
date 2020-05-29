@@ -13,4 +13,12 @@ class Category extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+
+    public function room(){
+        return $this->hasMany('App\Room', 'category_room', 'id');
+    }
+
+    public function booking(){
+        return $this->hasMany('App\Booking', 'category_room', 'id');
+    }
 }

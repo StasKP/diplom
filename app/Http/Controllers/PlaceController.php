@@ -116,4 +116,46 @@ class PlaceController extends Controller
             ->json()
             ->setStatusCode(404);
     }
+
+    // Редактирование места
+    public function update (Request $request, Room $room, Place $place)
+    {
+        // Проверка на администратора
+        if (Auth::user()->is_admin != 1) {
+            return response()
+                ->json()
+                ->setStatusCode(403, 'Forbidden');
+        }
+
+        // Валидация
+        $validator = Validator::make($request->all(), [
+            'name' => 'required', // Номер места
+            'is_empty' => 'required', // Свободно/Занято
+            'is_primary' => 'required', // Основное/Дополнительное
+        ]);
+
+        // В случае ошибки валидации
+        if ($validator->fails()) {
+            // Ответ клиенту
+            return response()
+                ->json($validator->errors())
+                ->setStatusCode(422, 'Unprocessable entity');
+        }
+
+        // Обновление записи в БД
+        $place->update($request->all());
+
+        // Ответ клиенту
+        return response()
+            ->json(
+                [
+                    'id' => $place->id,                                     // Id места в номере для проживания
+                    'name' => $place->name,                                 // Номер места в номере для проживания
+//                    'category_room' => $room->category_room,                // Категория номера для проживания
+//                    'corpus' => $room->coprus,                              // Корпус номера для проживания
+//                    'floor' => $room->floor,                                // Этаж номера для проживания
+                ]
+            )
+            ->setStatusCode(201, 'Created');
+    }
 }
