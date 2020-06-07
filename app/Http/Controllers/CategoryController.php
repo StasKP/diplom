@@ -77,6 +77,7 @@ class CategoryController extends Controller
         // Обновление записи в БД
         $category->update($request->all());
 
+
         // Ответ клиенту
         return response()
             ->json(
