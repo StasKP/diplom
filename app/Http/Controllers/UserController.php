@@ -78,7 +78,8 @@ class UserController extends Controller
             return response()
                 ->json([
                     'token' => $user->generateToken(),  // Генерация токена
-                    'client' => $user->client           // Отправка имени пользователя
+                    'client' => $user->client,          // Отправка имени пользователя
+                    'is_admin' => $user->is_admin           // Права администартора
                 ])
                 ->setStatusCode(200, 'OK');
         }
@@ -112,5 +113,17 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    // Получение всех пользователей
+    public function show(){
+        // Проверка на администратора/менеджера/регистратора
+        if (Auth::user()->is_admin != 1 && Auth::user()->role == null) {
+            return response()
+                ->json()
+                ->setStatusCode(403, 'Forbidden');
+        }
+
+        return User::all();
     }
 }

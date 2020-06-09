@@ -21,7 +21,7 @@ Route::post('/login', 'UserController@login'); // Авторизация
 Route::middleware('auth:api')->group(function () { // Запросы с токеном
     Route::post('/logout', 'UserController@logout'); // Выход
     Route::get('/user/{user}', 'UserController@index'); // Получение одного пользователя
-//    Route::get('/user', 'UserController@show'); // Получение всех пользователей
+    Route::get('/user', 'UserController@show'); // Получение всех пользователей
 
 });
 

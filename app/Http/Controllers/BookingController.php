@@ -31,7 +31,9 @@ class BookingController extends Controller
                 ->setStatusCode(422, 'Unprocessable entity');
         }
 
-        $user = Auth::user();
+
+            $user = Auth::user();
+
 
         // Создание записи в БД
         $bookingId = Booking::create($request->all()+[
@@ -169,7 +171,7 @@ class BookingController extends Controller
 
         // Обновление записи в БД
         $booking->update($request->all()+[
-//            'booking_status' => $booking_status,
+            'client' => $user,
         ]);
 
         // Ответ клиенту
